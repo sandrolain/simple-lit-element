@@ -5,6 +5,6 @@ node_modules
 /.vscode
 /coverage
 /*.tgz
-/demo/appia
+/demo/sle
 /demo/*.js
 /demo/*/*.js

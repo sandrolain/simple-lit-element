@@ -7,7 +7,10 @@
     "build": "npx rollup -c",
     "watch": "npx rollup -cw",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "demo:prepare": "npm run build && rm -rf ./demo/sle/ && cp -R ./dist/ ./demo/sle/",
+    "demo:build": "cd ./demo && tsc -b tsconfig.json",
+    "demo:serve": "npm run demo:prepare && npm run demo:build && http-server ./demo -o /"
   },
   "author": "Sandro Lain",
   "license": "MIT",
