@@ -1,0 +1,10 @@
+.DS_Store
+node_modules
+/dist
+/trash
+/.vscode
+/coverage
+/*.tgz
+/demo/appia
+/demo/*.js
+/demo/*/*.js
