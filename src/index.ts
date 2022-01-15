@@ -1,10 +1,32 @@
 import { CSSResultGroup, html, LitElement, TemplateResult, unsafeCSS, css } from "lit";
 
+class SimpleLitElement extends LitElement {
+  protected state: Map<string, any> = new Map();
+  setState (key: string | Record<string, any>, value?: any): void {
+    if(typeof key === "string") {
+      this.state.set(key, value);
+    } else {
+      for(const [k, v] of Object.entries(key)) {
+        this.state.set(k, v);
+      }
+    }
+    this.requestUpdate();
+  }
+  getState (key?: string, defaultValue?: any): any {
+    if(typeof key === "string") {
+      return this.state.get(key) ?? defaultValue;
+    }
+    return Array.from(this.state.entries()).reduce((ret, [key, value]) => {
+      ret[key] = value;
+      return ret;
+    }, {} as Record<string, any>);
+  }
+}
 
 export type ElementRenderResult = TemplateResult | string | Node;
-export type ElementRender = ElementRenderResult | ((element: LitElement, htmlFn: typeof html, cssFn: typeof css) => ElementRenderResult);
+export type ElementRender = ElementRenderResult | ((element: SimpleLitElement, htmlFn: typeof html, cssFn: typeof css) => ElementRenderResult);
 
-export default function element (tagName: string, styles?: CSSResultGroup | string, content?: ElementRender): typeof LitElement {
+export default function element (tagName: string, styles?: CSSResultGroup | string, content?: ElementRender): typeof SimpleLitElement {
 
   if(typeof styles === "string") {
     styles = unsafeCSS(styles);
@@ -30,29 +52,9 @@ export default function element (tagName: string, styles?: CSSResultGroup | stri
 
   const render = parseContent(content);
 
-  const cls = class extends LitElement {
+  const cls = class extends SimpleLitElement {
     static styles = (styles as CSSResultGroup) ?? LitElement.styles;
     protected render = render;
-    protected state: Map<string, any> = new Map();
-    setState (key: string | Record<string, any>, value?: any): void {
-      if(typeof key === "string") {
-        this.state.set(key, value);
-      } else {
-        for(const [k, v] of Object.entries(key)) {
-          this.state.set(k, v);
-        }
-      }
-      this.requestUpdate();
-    }
-    getState (key?: string): any {
-      if(typeof key === "string") {
-        return this.state.get(key);
-      }
-      return Array.from(this.state.entries()).reduce((ret, [key, value]) => {
-        ret[key] = value;
-        return ret;
-      }, {} as Record<string, any>);
-    }
   };
 
   window.customElements.define(tagName, cls);

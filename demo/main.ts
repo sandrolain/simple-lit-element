@@ -34,5 +34,5 @@ element("el-three", /*css*/`
     cursor: pointer;
   }
 `, function (el, html) {
-  return html`<span @click=${(): any => el.requestUpdate()}>Dynamic Content: ${Math.random()}, click here to update</span>`;
+  return html`<span @click=${(): any => el.setState("counter", el.getState("counter", 0) + 1)}>Dynamic Content: ${el.getState("counter", 0)}, click here to update</span>`;
 });
